@@ -8,9 +8,13 @@ COPY . /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html
 
-COPY <<EOF /etc/nginx/http.d/default.conf
+COPY <<'EOF' /start.sh
+#!/bin/sh
+APP_PORT=${PORT:-80}
+
+cat > /etc/nginx/http.d/default.conf <<NGINX
 server {
-    listen 80;
+    listen ${APP_PORT};
     root /var/www/html;
     index index.php;
 
@@ -24,10 +28,8 @@ server {
         include fastcgi_params;
     }
 }
-EOF
+NGINX
 
-COPY <<EOF /start.sh
-#!/bin/sh
 php-fpm -D
 nginx -g "daemon off;"
 EOF
