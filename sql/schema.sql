@@ -225,13 +225,13 @@ CREATE INDEX idx_icd10_kode ON icd10_codes(kode);
 -- Users (password di-hash dengan bcrypt)
 -- admin123, dokter123, apoteker123, kasir123, petugas123, manajer123
 INSERT INTO users (nama, username, password, role) VALUES
-('Administrator', 'admin', 'admin', 'admin'),
-('Dr. Andi Pratama', 'dr_andi', '123', 'dokter'),
-('Dr. Maya Sari', 'dr_maya', '123', 'dokter'),
-('Sari Apoteker', 'apoteker', '123', 'apoteker'),
-('Budi Kasir', 'kasir', '123', 'kasir'),
-('Ani Petugas', 'petugas', '123', 'pendaftaran'),
-('Eko Manajer', 'manajer', '123', 'manajer');
+('Administrator', 'admin', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'admin'),
+('Dr. Andi Pratama', 'dr_andi', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'dokter'),
+('Dr. Maya Sari', 'dr_maya', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'dokter'),
+('Sari Apoteker', 'apoteker', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'apoteker'),
+('Budi Kasir', 'kasir', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'kasir'),
+('Ani Petugas', 'petugas', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'pendaftaran'),
+('Eko Manajer', 'manajer', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'manajer');
 
 -- Dokter
 INSERT INTO dokter (nama_dokter, spesialisasi, no_sip, jadwal_praktek, id_user) VALUES
