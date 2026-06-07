@@ -2,7 +2,7 @@ FROM php:8.2-fpm-alpine
 
 RUN docker-php-ext-install pdo pdo_mysql
 
-RUN apk add --no-cache nginx dos2unix
+RUN apk add --no-cache nginx dos2unix gettext
 
 COPY . /var/www/html/
 COPY nginx.conf /etc/nginx/http.d/default.conf
@@ -12,6 +12,6 @@ RUN dos2unix /start.sh \
     && chmod +x /start.sh \
     && chown -R www-data:www-data /var/www/html
 
-EXPOSE 80
+EXPOSE ${PORT:-80}
 
 CMD ["/bin/sh", "/start.sh"]
