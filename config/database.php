@@ -4,14 +4,15 @@
  * Koneksi PDO ke MySQL
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'klinik_sehat_bersama');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', getenv('MYSQLHOST'));
+define('DB_NAME', getenv('MYSQLDATABASE'));
+define('DB_USER', getenv('MYSQLUSER'));
+define('DB_PASS', getenv('MYSQLPASSWORD'));
+define('BASE_URL', '');
 define('DB_CHARSET', 'utf8mb4');
 
 // Base URL
-define('BASE_URL', '/Klinik_Sehat_Bersama');
+// define('BASE_URL', '/Klinik_Sehat_Bersama');
 
 // Biaya konsultasi default
 define('BIAYA_KONSULTASI', 50000);
