@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class="mt-4 p-3 rounded" style="background: #f8fafc; font-size: 0.8rem;">
                 <strong>Username :  </strong><br>
-                petugas, dr_andi, dr-maya, kasir, apoteker, admin, manajer<br>
+                petugas, dr_andi, dr_maya, apoteker, kasir, manajer<br>
                 <span class="text-muted">Password : 123</span>
             </div>
         </div>
