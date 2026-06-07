@@ -225,7 +225,7 @@ CREATE INDEX idx_icd10_kode ON icd10_codes(kode);
 -- Users (password di-hash dengan bcrypt)
 -- admin123, dokter123, apoteker123, kasir123, petugas123, manajer123
 INSERT INTO users (nama, username, password, role) VALUES
-('Administrator', 'admin', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'admin'),
+('Administrator', 'admin', '$2y$12$fmTgt/IcspZk2/qicJsLj.JJBz1d/t4EnbNmqU51PT8/xP6GyjNEK', 'admin'),
 ('Dr. Andi Pratama', 'dr_andi', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'dokter'),
 ('Dr. Maya Sari', 'dr_maya', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'dokter'),
 ('Sari Apoteker', 'apoteker', '$2y$12$6PUwXqkePRTbUrog4kPoOuP7dUEI1V4SAMWn8uMByedwbj211xj.C', 'apoteker'),
