@@ -59,6 +59,7 @@ $result = paginate($pdo, $query, $params, $page, 20);
                             <div class="btn-group btn-group-sm">
                                 <a href="edit.php?id=<?= $o['id_obat'] ?>" class="btn btn-outline-warning" title="Edit"><i class="bi bi-pencil"></i></a>
                                 <a href="log.php?id_obat=<?= $o['id_obat'] ?>" class="btn btn-outline-info" title="Lihat Log"><i class="bi bi-list-check"></i></a>
+                                <a href="aksi.php?action=delete&id=<?= $o['id_obat'] ?>" class="btn btn-outline-danger" title="Hapus" data-confirm="Apakah Anda yakin ingin menghapus obat '<?= e($o['nama_obat']) ?>'? Tindakan ini tidak dapat dibatalkan."><i class="bi bi-trash-fill"></i></a>
                             </div>
                             <?php endif; ?>
                         </td>

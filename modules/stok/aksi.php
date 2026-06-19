@@ -52,4 +52,45 @@ if ($action === 'edit') {
     redirect('index.php');
 }
 
+// GET actions
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $action = $_GET['action'] ?? '';
+
+    if ($action === 'delete') {
+        $id = (int)$_GET['id'];
+
+        // Check for related records that would block deletion
+        $checks = [
+            ['table' => 'detail_resep',   'column' => 'id_obat',  'label' => 'Detail Resep'],
+            ['table' => 'detail_resep',   'column' => 'id_obat_substitusi', 'label' => 'Substitusi Resep'],
+            ['table' => 'stok_obat_log',  'column' => 'id_obat',  'label' => 'Log Stok Obat'],
+            ['table' => 'pengadaan_obat', 'column' => 'id_obat',  'label' => 'Pengadaan Obat'],
+        ];
+
+        $blocking = [];
+        foreach ($checks as $chk) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM {$chk['table']} WHERE {$chk['column']} = :id");
+            $stmt->execute([':id' => $id]);
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                $blocking[] = "{$chk['label']} ({$count} data)";
+            }
+        }
+
+        if (!empty($blocking)) {
+            set_flash('error', 'Obat tidak dapat dihapus karena masih memiliki data terkait: ' . implode(', ', $blocking) . '.');
+            redirect('index.php');
+        }
+
+        try {
+            $pdo->prepare("DELETE FROM obat WHERE id_obat = :id")->execute([':id' => $id]);
+            set_flash('success', 'Data obat berhasil dihapus.');
+        } catch (Exception $e) {
+            set_flash('error', 'Gagal menghapus obat: ' . $e->getMessage());
+        }
+        redirect('index.php');
+    }
+}
+
 redirect('index.php');
+
