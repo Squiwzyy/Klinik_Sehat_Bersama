@@ -137,6 +137,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         set_flash('success', 'Status user berhasil diubah.');
         redirect('index.php');
     }
+    
+    // Delete user
+    if ($action === 'delete') {
+        $id = (int)$_GET['id'];
+        
+        // Prevent self-deletion
+        if ($id === (int)$_SESSION['user_id']) {
+            set_flash('error', 'Anda tidak dapat menghapus akun sendiri.');
+            redirect('index.php');
+        }
+        
+        // Check for related records that would block deletion
+        $checks = [
+            ['table' => 'antrian',        'column' => 'id_petugas',   'label' => 'Antrian'],
+            ['table' => 'resep_obat',     'column' => 'id_apoteker',  'label' => 'Resep Obat'],
+            ['table' => 'pembayaran',     'column' => 'id_kasir',     'label' => 'Pembayaran'],
+            ['table' => 'pengadaan_obat', 'column' => 'id_pengaju',   'label' => 'Pengadaan (Pengaju)'],
+            ['table' => 'pengadaan_obat', 'column' => 'id_penyetuju', 'label' => 'Pengadaan (Penyetuju)'],
+        ];
+        
+        $blocking = [];
+        foreach ($checks as $chk) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM {$chk['table']} WHERE {$chk['column']} = :id");
+            $stmt->execute([':id' => $id]);
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                $blocking[] = "{$chk['label']} ({$count} data)";
+            }
+        }
+        
+        if (!empty($blocking)) {
+            set_flash('error', 'User tidak dapat dihapus karena masih memiliki data terkait: ' . implode(', ', $blocking) . '. Nonaktifkan user sebagai alternatif.');
+            redirect('index.php');
+        }
+        
+        try {
+            $pdo->beginTransaction();
+            
+            // Delete from dokter first (has ON DELETE CASCADE, but explicit is clearer)
+            $pdo->prepare("DELETE FROM dokter WHERE id_user = :id")->execute([':id' => $id]);
+            
+            // Delete from rekam_medis if user is referenced
+            $pdo->prepare("DELETE FROM rekam_medis WHERE id_user = :id")->execute([':id' => $id]);
+            
+            // Delete the user
+            $pdo->prepare("DELETE FROM users WHERE id_user = :id")->execute([':id' => $id]);
+            
+            $pdo->commit();
+            set_flash('success', 'User berhasil dihapus.');
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            set_flash('error', 'Gagal menghapus user: ' . $e->getMessage());
+        }
+        redirect('index.php');
+    }
 }
 
 redirect('index.php');

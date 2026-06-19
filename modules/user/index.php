@@ -57,6 +57,7 @@ $result = paginate($pdo, $query, $params, $page, 20);
                                     <?php else: ?>
                                         <a href="aksi.php?action=toggle&id=<?= $u['id_user'] ?>" class="btn btn-outline-success" title="Aktifkan" data-confirm="Aktifkan user ini?"><i class="bi bi-unlock-fill"></i></a>
                                     <?php endif; ?>
+                                    <a href="aksi.php?action=delete&id=<?= $u['id_user'] ?>" class="btn btn-outline-danger" title="Hapus" data-confirm="Apakah Anda yakin ingin menghapus user '<?= e($u['nama']) ?>'? Tindakan ini tidak dapat dibatalkan."><i class="bi bi-trash-fill"></i></a>
                                 <?php endif; ?>
                             </div>
                         </td>
