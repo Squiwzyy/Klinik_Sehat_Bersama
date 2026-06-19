@@ -41,4 +41,27 @@ if ($action === 'edit') {
     redirect('index.php');
 }
 
+if ($action === 'hapus') {
+    verify_csrf();
+    $id = (int)$_POST['id_pasien'];
+    
+    // Cek apakah pasien memiliki data terkait (antrian, rekam medis, dll)
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM antrian WHERE id_pasien = :id");
+    $stmt->execute([':id' => $id]);
+    $has_antrian = $stmt->fetchColumn() > 0;
+    
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM rekam_medis WHERE id_pasien = :id");
+    $stmt->execute([':id' => $id]);
+    $has_rekam = $stmt->fetchColumn() > 0;
+    
+    if ($has_antrian || $has_rekam) {
+        set_flash('error', 'Pasien tidak dapat dihapus karena masih memiliki data antrian atau rekam medis.');
+    } else {
+        $stmt = $pdo->prepare("DELETE FROM pasien WHERE id_pasien = :id");
+        $stmt->execute([':id' => $id]);
+        set_flash('success', 'Data pasien berhasil dihapus.');
+    }
+    redirect('index.php');
+}
+
 redirect('index.php');
