@@ -150,11 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         
         // Check for related records that would block deletion
         $checks = [
-            ['table' => 'antrian',        'column' => 'id_petugas',   'label' => 'Antrian'],
-            ['table' => 'resep_obat',     'column' => 'id_apoteker',  'label' => 'Resep Obat'],
-            ['table' => 'pembayaran',     'column' => 'id_kasir',     'label' => 'Pembayaran'],
-            ['table' => 'pengadaan_obat', 'column' => 'id_pengaju',   'label' => 'Pengadaan (Pengaju)'],
-            ['table' => 'pengadaan_obat', 'column' => 'id_penyetuju', 'label' => 'Pengadaan (Penyetuju)'],
+            ['table' => 'antrian',              'column' => 'id_petugas',   'label' => 'Antrian'],
+            ['table' => 'resep',                'column' => 'id_apoteker',  'label' => 'Resep'],
+            ['table' => 'transaksi_pembayaran', 'column' => 'id_kasir',     'label' => 'Pembayaran'],
+            ['table' => 'pengadaan_obat',       'column' => 'id_pengaju',   'label' => 'Pengadaan (Pengaju)'],
+            ['table' => 'pengadaan_obat',       'column' => 'id_penyetuju', 'label' => 'Pengadaan (Penyetuju)'],
+            ['table' => 'stok_obat_log',        'column' => 'id_user',      'label' => 'Log Stok Obat'],
         ];
         
         $blocking = [];
@@ -173,21 +174,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
         
         try {
-            $pdo->beginTransaction();
-            
-            // Delete from dokter first (has ON DELETE CASCADE, but explicit is clearer)
-            $pdo->prepare("DELETE FROM dokter WHERE id_user = :id")->execute([':id' => $id]);
-            
-            // Delete from rekam_medis if user is referenced
-            $pdo->prepare("DELETE FROM rekam_medis WHERE id_user = :id")->execute([':id' => $id]);
-            
-            // Delete the user
+            // dokter table has ON DELETE CASCADE, so deleting the user will auto-remove dokter record
             $pdo->prepare("DELETE FROM users WHERE id_user = :id")->execute([':id' => $id]);
-            
-            $pdo->commit();
             set_flash('success', 'User berhasil dihapus.');
         } catch (Exception $e) {
-            $pdo->rollBack();
             set_flash('error', 'Gagal menghapus user: ' . $e->getMessage());
         }
         redirect('index.php');
