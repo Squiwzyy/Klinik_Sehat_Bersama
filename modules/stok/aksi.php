@@ -60,10 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $id = (int)$_GET['id'];
 
         // Check for related records that would block deletion
+        // Note: stok_obat_log is NOT blocking — it will be cascade-deleted
         $checks = [
             ['table' => 'detail_resep',   'column' => 'id_obat',  'label' => 'Detail Resep'],
             ['table' => 'detail_resep',   'column' => 'id_obat_substitusi', 'label' => 'Substitusi Resep'],
-            ['table' => 'stok_obat_log',  'column' => 'id_obat',  'label' => 'Log Stok Obat'],
             ['table' => 'pengadaan_obat', 'column' => 'id_obat',  'label' => 'Pengadaan Obat'],
         ];
 
@@ -83,9 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
 
         try {
+            $pdo->beginTransaction();
+            // Cascade-delete log stok (historical tracking data)
+            $pdo->prepare("DELETE FROM stok_obat_log WHERE id_obat = :id")->execute([':id' => $id]);
+            // Delete the obat record
             $pdo->prepare("DELETE FROM obat WHERE id_obat = :id")->execute([':id' => $id]);
+            $pdo->commit();
             set_flash('success', 'Data obat berhasil dihapus.');
         } catch (Exception $e) {
+            $pdo->rollBack();
             set_flash('error', 'Gagal menghapus obat: ' . $e->getMessage());
         }
         redirect('index.php');
